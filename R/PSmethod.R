@@ -68,6 +68,7 @@ PSmethod<-function(ps.formula=ps.formula, method="glm", data=data, ncate=ncate,.
       e.h <- fitglm$fitted.values
     }
     beta.h<-as.numeric(t(coef(fitglm)))
+    psm<-fitglm
   }
 
   ############## gbm ###################################################################
@@ -131,6 +132,7 @@ PSmethod<-function(ps.formula=ps.formula, method="glm", data=data, ncate=ncate,.
       e.h<-predict(fitgbm, newdata = data, type = "response")[,,1]
 
     }
+    psm<-fitgbm
   }
 
 ############## super learner #############################################################
@@ -179,12 +181,13 @@ PSmethod<-function(ps.formula=ps.formula, method="glm", data=data, ncate=ncate,.
       e.h<-cbind((1-fitsl$SL.predict),fitsl$SL.predict)
     }
 
+    psm<-fitsl
   }
 
   #relabel the propensity name
   colnames(e.h)<-dic
 
-  return(list(e.h=e.h,beta.h=beta.h))
+  return(list(e.h=e.h,beta.h=beta.h,psm=psm))
 }
 
 

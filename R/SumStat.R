@@ -145,6 +145,7 @@
 #'
 #'
 SumStat<- function(ps.formula=NULL,ps.estimate=NULL,trtgrp=NULL,Z=NULL,covM=NULL,zname=NULL,xname=NULL,data=NULL,weight="overlap",delta=0,method='glm',ps.control=list()){
+  psmres<-NULL #initialize to null
   #if not user-supplied weights
   if (is.null(ps.estimate)){
     #extract z name
@@ -173,7 +174,8 @@ SumStat<- function(ps.formula=NULL,ps.estimate=NULL,trtgrp=NULL,Z=NULL,covM=NULL
 
 
     #fit propensity score model
-    e.h<-do.call(PSmethod,c(list(ps.formula = ps.formula, method=method, data=data,ncate=ncate),ps.control))$e.h
+    psmres <- do.call(PSmethod,c(list(ps.formula = ps.formula, method=method, data=data,ncate=ncate),ps.control))
+    e.h<-psmres$e.h
 
     #post-trimming processing
     z<-as.numeric(data[,zname])
@@ -515,7 +517,7 @@ SumStat<- function(ps.formula=NULL,ps.estimate=NULL,trtgrp=NULL,Z=NULL,covM=NULL
 
   #output
   if (is.null(trtgrp)) trtgrp=dic[ncate]
-  output<-list(trtgrp=trtgrp, propensity=e.h, ps.weights=ps.weights, ess=eff.sample.size, unweighted.sumstat=unweighted)
+  output<-list(trtgrp=trtgrp, propensity=e.h, ps.weights=ps.weights, ess=eff.sample.size, unweighted.sumstat=unweighted,psm=psmres)
 
   for (i in 1:(length(weight))){
     output[[paste0(weight[i],".sumstat")]]<-get(weight[i])
